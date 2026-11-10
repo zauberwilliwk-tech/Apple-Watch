@@ -1,7 +1,15 @@
 # Out – Apple Watch & iPhone
 
-Zeigt zu jeder Zuschauer-Zahl **1–52** sofort **CODE (A/B/C)** und **KARTE (2/4/6/8)** aus der Tabelle an –
-auf dem **iPhone** und auf der **Apple Watch**.
+Hilfe für die **Syned Soy Box**: Zeigt zu jeder Zuschauer-Zahl **1–52** sofort an –
+auf dem **iPhone** und auf der **Apple Watch**:
+
+- **Code A/B/C** + Reihenfolge der 4 Stifte
+- **Forcierkarte** (2 = Pik-König, 4 = Herz-Bube, 6 = Kreuz-König, 8 = Karo-Bube) + wie das Kuvert zu öffnen ist
+- Spiel **verdeckt** (≤ 24) oder **offen** (> 24) abzählen
+- **nächste Karte** (ungerade) oder **letzte gezählte Karte** (gerade)
+- Ausnahme **49–52** (Etui-Spiel)
+
+👉 Ohne Xcode: siehe **[KURZBEFEHL.md](KURZBEFEHL.md)**.
 
 ## Funktionen
 

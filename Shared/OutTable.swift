@@ -9,6 +9,63 @@ struct OutEntry: Identifiable, Equatable {
     let card: Int          // CARD minus 0, 8 or 16
 
     var id: Int { number }
+
+    /// Forcierkarte: 2 = Pik-König, 4 = Herz-Bube, 6 = Kreuz-König, 8 = Karo-Bube
+    var cardName: String {
+        switch card {
+        case 2: return "Pik-König"
+        case 4: return "Herz-Bube"
+        case 6: return "Kreuz-König"
+        default: return "Karo-Bube"
+        }
+    }
+
+    var cardShort: String {
+        switch card {
+        case 2: return "K♠"
+        case 4: return "B♥"
+        case 6: return "K♣"
+        default: return "B♦"
+        }
+    }
+
+    /// Rote Karte → Kuvert mit Naht nach OBEN öffnen, schwarz → Naht nach UNTEN.
+    var isRed: Bool { card == 4 || card == 8 }
+
+    /// 49–52: Ausnahme – Spiel aus dem „leeren“ Etui (53 Karten inkl. Joker) verwenden.
+    var isException: Bool { number > 48 }
+
+    /// ≤ 24 → vom verdeckten Spiel abzählen, > 24 → vom offenen Spiel.
+    var faceUp: Bool { number > 24 }
+
+    /// Ungerade → die NÄCHSTE Karte, gerade → die LETZTE abgezählte Karte.
+    var nextCard: Bool { !number.isMultiple(of: 2) }
+
+    /// Schlüsselzahl (Key Number) laut Anleitung.
+    var keyNumber: Int { mirrored ?? even }
+
+    var deckText: String {
+        if isException { return "Etui-Spiel (53 Karten)" }
+        return faceUp ? "Spiel OFFEN abzählen" : "Spiel VERDECKT abzählen"
+    }
+
+    var positionText: String {
+        nextCard ? "\(number) abzählen → NÄCHSTE Karte" : "\(number). Karte = LETZTE gezählte"
+    }
+
+    /// Reihenfolge der Stifte (Fig. 8, Blick von oben auf die Box).
+    var pinOrder: [String] {
+        switch code {
+        case "A": return ["oben links", "unten links", "oben rechts", "unten rechts"]
+        case "B": return ["unten rechts", "oben rechts", "unten links", "oben links"]
+        default:  return ["unten links", "oben links", "unten rechts", "oben rechts"]
+        }
+    }
+
+    /// Kurzzeile für Watch / Kurzbefehl.
+    var summary: String {
+        "\(code) · \(cardShort) \(cardName) · \(isException ? "Etui" : (faceUp ? "offen" : "verdeckt")) · \(nextCard ? "nächste Karte" : "letzte Karte")"
+    }
 }
 
 enum OutTable {

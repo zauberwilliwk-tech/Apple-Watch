@@ -138,25 +138,42 @@ struct ResultCard: View {
     var body: some View {
         VStack(spacing: 6) {
             if let entry {
-                Text("Zuschauer: \(entry.number)")
+                Text("Zuschauer: \(entry.number)  ·  Schlüsselzahl \(entry.keyNumber)")
                     .font(.headline)
                     .foregroundStyle(.secondary)
                 HStack(alignment: .firstTextBaseline, spacing: 28) {
                     VStack(spacing: 0) {
                         Text(entry.code)
-                            .font(.system(size: 120, weight: .black, design: .rounded))
+                            .font(.system(size: 110, weight: .black, design: .rounded))
                             .foregroundStyle(.yellow)
                         Text("CODE").font(.caption).foregroundStyle(.secondary)
                     }
                     VStack(spacing: 0) {
-                        Text("\(entry.card)")
-                            .font(.system(size: 120, weight: .black, design: .rounded))
-                        Text("KARTE").font(.caption).foregroundStyle(.secondary)
+                        Text(entry.cardShort)
+                            .font(.system(size: 90, weight: .black, design: .rounded))
+                            .foregroundStyle(entry.isRed ? .red : .primary)
+                        Text(entry.cardName.uppercased()).font(.caption).foregroundStyle(.secondary)
                     }
                 }
+                VStack(alignment: .leading, spacing: 6) {
+                    Label("Stifte: " + entry.pinOrder.enumerated()
+                            .map { "\($0.offset + 1). \($0.element)" }.joined(separator: ", "),
+                          systemImage: "pin")
+                    Label(entry.deckText, systemImage: entry.isException ? "exclamationmark.triangle" : (entry.faceUp ? "eye" : "eye.slash"))
+                    Label(entry.positionText, systemImage: "hand.point.up")
+                    Label("Kuvert: Naht nach \(entry.isRed ? "OBEN (rot)" : "UNTEN (schwarz)")", systemImage: "envelope")
+                    if entry.isException {
+                        Label("Ausnahme: Spiel ins Etui auf die 4 Karten, zweiter Zuschauer zählt", systemImage: "info.circle")
+                            .foregroundStyle(.orange)
+                    }
+                }
+                .font(.subheadline)
+                .padding(.horizontal)
+                .padding(.top, 6)
                 Text(steps(entry))
                     .font(.footnote.monospacedDigit())
                     .foregroundStyle(.secondary)
+                    .padding(.top, 4)
             } else {
                 Image(systemName: "number.circle")
                     .font(.system(size: 64))
@@ -166,6 +183,7 @@ struct ResultCard: View {
             }
         }
         .frame(maxWidth: .infinity, minHeight: 260)
+        .padding(.vertical, 12)
         .background(Color(.secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 24))
     }
@@ -195,7 +213,7 @@ struct TableView: View {
                         .foregroundStyle(.secondary)
                     Spacer()
                     Text(e.code).bold().foregroundStyle(.yellow).frame(width: 30)
-                    Text("\(e.card)").bold().frame(width: 30)
+                    Text(e.cardShort).bold().foregroundStyle(e.isRed ? .red : .primary).frame(width: 40)
                 }
                 .font(.body.monospacedDigit())
                 .listRowBackground(e.number == highlight ? Color.yellow.opacity(0.25) : nil)

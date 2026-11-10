@@ -74,25 +74,38 @@ struct WatchContentView: View {
     // MARK: Ergebnis
 
     private func resultView(_ e: OutEntry) -> some View {
-        VStack(spacing: 0) {
-            Text("\(e.number)")
-                .font(.headline.monospacedDigit())
-                .foregroundStyle(.secondary)
-            HStack(alignment: .firstTextBaseline, spacing: 14) {
-                Text(e.code)
-                    .font(.system(size: 76, weight: .black, design: .rounded))
-                    .foregroundStyle(.yellow)
-                Text("\(e.card)")
-                    .font(.system(size: 76, weight: .black, design: .rounded))
+        ScrollView {
+            VStack(spacing: 2) {
+                Text("\(e.number)")
+                    .font(.headline.monospacedDigit())
+                    .foregroundStyle(.secondary)
+                HStack(alignment: .firstTextBaseline, spacing: 10) {
+                    Text(e.code)
+                        .font(.system(size: 64, weight: .black, design: .rounded))
+                        .foregroundStyle(.yellow)
+                    Text(e.cardShort)
+                        .font(.system(size: 52, weight: .black, design: .rounded))
+                        .foregroundStyle(e.isRed ? .red : .white)
+                }
+                .minimumScaleFactor(0.5)
+                Text(e.cardName).font(.footnote.bold())
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(e.isException ? "⚠️ Etui-Spiel" : (e.faceUp ? "👁 offen zählen" : "🂠 verdeckt zählen"))
+                    Text(e.nextCard ? "➡️ nächste Karte" : "⏹ letzte Karte")
+                    Text("📌 " + e.pinOrder.joined(separator: " → "))
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+                .font(.footnote)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top, 4)
+                Button("Neu") {
+                    withAnimation { result = nil }
+                }
+                .buttonStyle(.bordered)
+                .padding(.top, 4)
             }
-            .minimumScaleFactor(0.5)
-            Button("Neu") {
-                withAnimation { result = nil }
-            }
-            .buttonStyle(.bordered)
         }
-        .contentShape(Rectangle())
-        .onTapGesture { withAnimation { result = nil } }
     }
 
     private func show(_ n: Int, sync: Bool = true) {
