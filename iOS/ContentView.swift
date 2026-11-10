@@ -152,7 +152,7 @@ struct ResultCard: View {
                         Text(entry.cardShort)
                             .font(.system(size: 90, weight: .black, design: .rounded))
                             .foregroundStyle(entry.isRed ? .red : .primary)
-                        Text(entry.cardName.uppercased()).font(.caption).foregroundStyle(.secondary)
+                        Text("OUT \(entry.out) · \(entry.cardName.uppercased())").font(.caption).foregroundStyle(.secondary)
                     }
                 }
                 VStack(alignment: .leading, spacing: 6) {
@@ -161,7 +161,6 @@ struct ResultCard: View {
                           systemImage: "pin")
                     Label(entry.deckText, systemImage: entry.isException ? "exclamationmark.triangle" : (entry.faceUp ? "eye" : "eye.slash"))
                     Label(entry.positionText, systemImage: "hand.point.up")
-                    Label("Kuvert: Naht nach \(entry.isRed ? "OBEN (rot)" : "UNTEN (schwarz)")", systemImage: "envelope")
                     if entry.isException {
                         Label("Ausnahme: Spiel ins Etui auf die 4 Karten, zweiter Zuschauer zählt", systemImage: "info.circle")
                             .foregroundStyle(.orange)

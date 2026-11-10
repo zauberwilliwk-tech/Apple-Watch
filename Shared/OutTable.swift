@@ -10,27 +10,20 @@ struct OutEntry: Identifiable, Equatable {
 
     var id: Int { number }
 
-    /// Forcierkarte: 2 = Pik-König, 4 = Herz-Bube, 6 = Kreuz-König, 8 = Karo-Bube
-    var cardName: String {
-        switch card {
-        case 2: return "Pik-König"
-        case 4: return "Herz-Bube"
-        case 6: return "Kreuz-König"
-        default: return "Karo-Bube"
-        }
-    }
+    /// Deine Outs (Forcierkarten). Hier ändern, falls du andere Karten benutzt.
+    /// Code-Zahl 2 → Out 1, 4 → Out 2, 6 → Out 3, 8 → Out 4
+    static let outs: [(short: String, name: String, red: Bool)] = [
+        ("♣4", "Kreuz 4", false),   // Out 1  (Code-Zahl 2)
+        ("♥2", "Herz 2", true),     // Out 2  (Code-Zahl 4)
+        ("♦7", "Karo 7", true),     // Out 3  (Code-Zahl 6)
+        ("♣3", "Kreuz 3", false),   // Out 4  (Code-Zahl 8)
+    ]
 
-    var cardShort: String {
-        switch card {
-        case 2: return "K♠"
-        case 4: return "B♥"
-        case 6: return "K♣"
-        default: return "B♦"
-        }
-    }
-
-    /// Rote Karte → Kuvert mit Naht nach OBEN öffnen, schwarz → Naht nach UNTEN.
-    var isRed: Bool { card == 4 || card == 8 }
+    /// Out 1–4
+    var out: Int { card / 2 }
+    var cardName: String { Self.outs[out - 1].name }
+    var cardShort: String { Self.outs[out - 1].short }
+    var isRed: Bool { Self.outs[out - 1].red }
 
     /// 49–52: Ausnahme – Spiel aus dem „leeren“ Etui (53 Karten inkl. Joker) verwenden.
     var isException: Bool { number > 48 }
@@ -64,7 +57,7 @@ struct OutEntry: Identifiable, Equatable {
 
     /// Kurzzeile für Watch / Kurzbefehl.
     var summary: String {
-        "\(code) · \(cardShort) \(cardName) · \(isException ? "Etui" : (faceUp ? "offen" : "verdeckt")) · \(nextCard ? "nächste Karte" : "letzte Karte")"
+        "\(code) · Out \(out) \(cardName) · \(isException ? "Etui" : (faceUp ? "offen" : "verdeckt")) · \(nextCard ? "nächste Karte" : "letzte Karte")"
     }
 }
 

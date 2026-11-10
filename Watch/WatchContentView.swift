@@ -88,7 +88,7 @@ struct WatchContentView: View {
                         .foregroundStyle(e.isRed ? .red : .white)
                 }
                 .minimumScaleFactor(0.5)
-                Text(e.cardName).font(.footnote.bold())
+                Text("Out \(e.out) · \(e.cardName)").font(.footnote.bold())
                 VStack(alignment: .leading, spacing: 2) {
                     Text(e.isException ? "⚠️ Etui-Spiel" : (e.faceUp ? "👁 offen zählen" : "🂠 verdeckt zählen"))
                     Text(e.nextCard ? "➡️ nächste Karte" : "⏹ letzte Karte")

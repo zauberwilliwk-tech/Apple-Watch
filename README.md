@@ -4,7 +4,7 @@ Hilfe für die **Syned Soy Box**: Zeigt zu jeder Zuschauer-Zahl **1–52** sofor
 auf dem **iPhone** und auf der **Apple Watch**:
 
 - **Code A/B/C** + Reihenfolge der 4 Stifte
-- **Forcierkarte** (2 = Pik-König, 4 = Herz-Bube, 6 = Kreuz-König, 8 = Karo-Bube) + wie das Kuvert zu öffnen ist
+- **Out 1–4**: Kreuz 4, Herz 2, Karo 7, Kreuz 3 (änderbar in `Shared/OutTable.swift`)
 - Spiel **verdeckt** (≤ 24) oder **offen** (> 24) abzählen
 - **nächste Karte** (ungerade) oder **letzte gezählte Karte** (gerade)
 - Ausnahme **49–52** (Etui-Spiel)

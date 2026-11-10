@@ -10,69 +10,80 @@
 Name: **Out**. ⓘ → **Auf Apple Watch anzeigen**.
 Starten: Aktionstaste (Einstellungen › Aktionstaste › Kurzbefehl › Out), Home-Bildschirm-Symbol oder Watch-Komplikation.
 
+## Deine Outs
+| Out | Karte | Code-Zahl (Tabelle) | ersetzt im Original |
+|---|---|---|---|
+| Out 1 | Kreuz 4 | 2 | Pik-König |
+| Out 2 | Herz 2 | 4 | Herz-Bube |
+| Out 3 | Karo 7 | 6 | Kreuz-König |
+| Out 4 | Kreuz 3 | 8 | Karo-Bube |
+
+**Stapel 1 vorbereiten (von unten nach oben):** 25 Karten · **Kreuz 3** · beliebig · **Karo 7** · beliebig · **Herz 2** · beliebig · **Kreuz 4** · beliebig = 33 Karten.
+Double-Ender: Out 2 + Out 4 (Herz 2 / Kreuz 3) auf einer Karte, Out 1 + Out 3 (Kreuz 4 / Karo 7) auf der anderen.
+
 ## Bedeutung einer Zeile
-`C · K♠ Pik-König · verdeckt · nächste Karte`
-- **Code** A/B/C = welcher Stift zuerst gezogen wird (dann gleiche Seite → diagonal → letzter)
+`C · Out 1 Kreuz 4 · verdeckt · nächste Karte`
+- **Code** A/B/C = welcher Stift zuerst (dann gleiche Seite → diagonal → letzter)
   - A: oben links → unten links → oben rechts → unten rechts
   - B: unten rechts → oben rechts → unten links → oben links
   - C: unten links → oben links → unten rechts → oben rechts
-- **Karte** = Vorhersage (rot ♥♦ → Kuvert Naht oben, schwarz ♠♣ → Naht unten)
+- **Out** = Vorhersagekarte
 - **verdeckt / offen** = Spiel verdeckt (≤ 24) oder offen (> 24) abzählen lassen
-- **nächste / letzte Karte** = ungerade Zahl → nächste Karte, gerade → letzte gezählte Karte
+- **nächste / letzte Karte** = ungerade → nächste Karte, gerade → letzte gezählte
 - **Etui** (49–52) = Ausnahme: Spiel ins „leere“ Etui (53 Karten), zweiter Zuschauer zählt
 
 ## Die 52 Zeilen
 ```
-A · K♠ Pik-König · verdeckt · nächste Karte
-A · K♠ Pik-König · verdeckt · letzte Karte
-A · B♥ Herz-Bube · verdeckt · nächste Karte
-A · B♥ Herz-Bube · verdeckt · letzte Karte
-A · K♣ Kreuz-König · verdeckt · nächste Karte
-A · K♣ Kreuz-König · verdeckt · letzte Karte
-A · B♦ Karo-Bube · verdeckt · nächste Karte
-A · B♦ Karo-Bube · verdeckt · letzte Karte
-B · K♠ Pik-König · verdeckt · nächste Karte
-B · K♠ Pik-König · verdeckt · letzte Karte
-B · B♥ Herz-Bube · verdeckt · nächste Karte
-B · B♥ Herz-Bube · verdeckt · letzte Karte
-B · K♣ Kreuz-König · verdeckt · nächste Karte
-B · K♣ Kreuz-König · verdeckt · letzte Karte
-B · B♦ Karo-Bube · verdeckt · nächste Karte
-B · B♦ Karo-Bube · verdeckt · letzte Karte
-C · K♠ Pik-König · verdeckt · nächste Karte
-C · K♠ Pik-König · verdeckt · letzte Karte
-C · B♥ Herz-Bube · verdeckt · nächste Karte
-C · B♥ Herz-Bube · verdeckt · letzte Karte
-C · K♣ Kreuz-König · verdeckt · nächste Karte
-C · K♣ Kreuz-König · verdeckt · letzte Karte
-C · B♦ Karo-Bube · verdeckt · nächste Karte
-C · B♦ Karo-Bube · verdeckt · letzte Karte
-C · B♦ Karo-Bube · offen · nächste Karte
-C · B♦ Karo-Bube · offen · letzte Karte
-C · K♣ Kreuz-König · offen · nächste Karte
-C · K♣ Kreuz-König · offen · letzte Karte
-C · B♥ Herz-Bube · offen · nächste Karte
-C · B♥ Herz-Bube · offen · letzte Karte
-C · K♠ Pik-König · offen · nächste Karte
-C · K♠ Pik-König · offen · letzte Karte
-B · B♦ Karo-Bube · offen · nächste Karte
-B · B♦ Karo-Bube · offen · letzte Karte
-B · K♣ Kreuz-König · offen · nächste Karte
-B · K♣ Kreuz-König · offen · letzte Karte
-B · B♥ Herz-Bube · offen · nächste Karte
-B · B♥ Herz-Bube · offen · letzte Karte
-B · K♠ Pik-König · offen · nächste Karte
-B · K♠ Pik-König · offen · letzte Karte
-A · B♦ Karo-Bube · offen · nächste Karte
-A · B♦ Karo-Bube · offen · letzte Karte
-A · K♣ Kreuz-König · offen · nächste Karte
-A · K♣ Kreuz-König · offen · letzte Karte
-A · B♥ Herz-Bube · offen · nächste Karte
-A · B♥ Herz-Bube · offen · letzte Karte
-A · K♠ Pik-König · offen · nächste Karte
-A · K♠ Pik-König · offen · letzte Karte
-A · B♥ Herz-Bube · Etui · nächste Karte
-A · B♥ Herz-Bube · Etui · letzte Karte
-A · K♠ Pik-König · Etui · nächste Karte
-A · K♠ Pik-König · Etui · letzte Karte
+A · Out 1 Kreuz 4 · verdeckt · nächste Karte
+A · Out 1 Kreuz 4 · verdeckt · letzte Karte
+A · Out 2 Herz 2 · verdeckt · nächste Karte
+A · Out 2 Herz 2 · verdeckt · letzte Karte
+A · Out 3 Karo 7 · verdeckt · nächste Karte
+A · Out 3 Karo 7 · verdeckt · letzte Karte
+A · Out 4 Kreuz 3 · verdeckt · nächste Karte
+A · Out 4 Kreuz 3 · verdeckt · letzte Karte
+B · Out 1 Kreuz 4 · verdeckt · nächste Karte
+B · Out 1 Kreuz 4 · verdeckt · letzte Karte
+B · Out 2 Herz 2 · verdeckt · nächste Karte
+B · Out 2 Herz 2 · verdeckt · letzte Karte
+B · Out 3 Karo 7 · verdeckt · nächste Karte
+B · Out 3 Karo 7 · verdeckt · letzte Karte
+B · Out 4 Kreuz 3 · verdeckt · nächste Karte
+B · Out 4 Kreuz 3 · verdeckt · letzte Karte
+C · Out 1 Kreuz 4 · verdeckt · nächste Karte
+C · Out 1 Kreuz 4 · verdeckt · letzte Karte
+C · Out 2 Herz 2 · verdeckt · nächste Karte
+C · Out 2 Herz 2 · verdeckt · letzte Karte
+C · Out 3 Karo 7 · verdeckt · nächste Karte
+C · Out 3 Karo 7 · verdeckt · letzte Karte
+C · Out 4 Kreuz 3 · verdeckt · nächste Karte
+C · Out 4 Kreuz 3 · verdeckt · letzte Karte
+C · Out 4 Kreuz 3 · offen · nächste Karte
+C · Out 4 Kreuz 3 · offen · letzte Karte
+C · Out 3 Karo 7 · offen · nächste Karte
+C · Out 3 Karo 7 · offen · letzte Karte
+C · Out 2 Herz 2 · offen · nächste Karte
+C · Out 2 Herz 2 · offen · letzte Karte
+C · Out 1 Kreuz 4 · offen · nächste Karte
+C · Out 1 Kreuz 4 · offen · letzte Karte
+B · Out 4 Kreuz 3 · offen · nächste Karte
+B · Out 4 Kreuz 3 · offen · letzte Karte
+B · Out 3 Karo 7 · offen · nächste Karte
+B · Out 3 Karo 7 · offen · letzte Karte
+B · Out 2 Herz 2 · offen · nächste Karte
+B · Out 2 Herz 2 · offen · letzte Karte
+B · Out 1 Kreuz 4 · offen · nächste Karte
+B · Out 1 Kreuz 4 · offen · letzte Karte
+A · Out 4 Kreuz 3 · offen · nächste Karte
+A · Out 4 Kreuz 3 · offen · letzte Karte
+A · Out 3 Karo 7 · offen · nächste Karte
+A · Out 3 Karo 7 · offen · letzte Karte
+A · Out 2 Herz 2 · offen · nächste Karte
+A · Out 2 Herz 2 · offen · letzte Karte
+A · Out 1 Kreuz 4 · offen · nächste Karte
+A · Out 1 Kreuz 4 · offen · letzte Karte
+A · Out 2 Herz 2 · Etui · nächste Karte
+A · Out 2 Herz 2 · Etui · letzte Karte
+A · Out 1 Kreuz 4 · Etui · nächste Karte
+A · Out 1 Kreuz 4 · Etui · letzte Karte
 ```
