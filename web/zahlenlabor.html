@@ -1,0 +1,235 @@
+<title>Zahlenlabor</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+/* Layout: one column "lab report" — input, result figures, distribution chart, metadata line */
+:root {
+  --bg: #f3f5f8;
+  --panel: #ffffff;
+  --fg: #16202c;
+  --muted: #5c6878;
+  --faint: #8a95a4;
+  --line: #dde2e9;
+  --bar: #b9c3d0;
+  --accent: #0f6f8f;
+  --accent-ink: #ffffff;
+  --display: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e141b; --panel: #151d27; --fg: #e6ebf1; --muted: #9aa6b5; --faint: #6e7a89;
+    --line: #253140; --bar: #3a4858; --accent: #4fb3d4; --accent-ink: #08131b; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e141b; --panel: #151d27; --fg: #e6ebf1; --muted: #9aa6b5; --faint: #6e7a89;
+  --line: #253140; --bar: #3a4858; --accent: #4fb3d4; --accent-ink: #08131b; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 40px;
+}
+main { max-width: 760px; margin: 0 auto; display: grid; gap: 20px; }
+main > * { min-width: 0; }
+header { display: grid; gap: 4px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1 { font-family: var(--display); font-weight: 700; font-size: clamp(28px, 7vw, 40px); line-height: 1.1; margin: 0; text-wrap: balance; }
+.lead { color: var(--muted); margin: 0; max-width: 60ch; }
+
+form { display: flex; gap: 10px; flex-wrap: wrap; }
+label.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+#zahl {
+  flex: 1 1 100px; min-width: 0; font: 600 28px/1 var(--mono); padding: 14px 16px; border-radius: 12px;
+  border: 1.5px solid var(--line); background: var(--panel); color: var(--fg);
+}
+#zahl:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+button {
+  font: 600 17px var(--body); padding: 14px 22px; border-radius: 12px; border: 0; cursor: pointer;
+  background: var(--accent); color: var(--accent-ink);
+}
+button.ghost { background: transparent; color: var(--muted); border: 1.5px solid var(--line); }
+.hint { font-size: 14px; color: var(--faint); margin: 0; min-height: 1.5em; }
+
+.figures { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 560px) { .figures { grid-template-columns: 1fr; } }
+.fig { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: grid; gap: 4px; min-width: 0; }
+.fig .k { font-size: 13px; color: var(--muted); }
+.fig .v { font: 700 30px/1.15 var(--display); font-variant-numeric: tabular-nums; }
+.fig .s { font-size: 13px; color: var(--faint); }
+.fig.main .v { color: var(--accent); font-size: 40px; }
+
+.chart { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: grid; gap: 10px; }
+.chart h2 { font: 600 17px var(--body); margin: 0; }
+.chart .sub { margin: 0; font-size: 14px; color: var(--muted); }
+.plot { position: relative; overflow-x: auto; }
+svg { display: block; width: 100%; height: auto; }
+svg text { font-family: var(--mono); font-size: 20px; fill: var(--faint); }
+.tip {
+  position: absolute; pointer-events: none; background: var(--fg); color: var(--bg); font: 500 13px var(--mono);
+  padding: 6px 9px; border-radius: 8px; white-space: nowrap; transform: translate(-50%, -110%);
+}
+.meta { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font: 12px var(--mono); color: var(--faint); }
+.meta b { font-weight: 500; color: var(--muted); letter-spacing: .04em; }
+footer { font-size: 12px; color: var(--faint); }
+@media (prefers-reduced-motion: no-preference) { rect.bar { transition: fill .25s, height .4s, y .4s; } }
+</style>
+
+<main>
+  <header>
+    <span class="eyebrow">Studie zur Zahlenwahl · 52 Möglichkeiten</span>
+    <h1>Zahlenlabor</h1>
+    <p class="lead">Welche Zahl zwischen 1 und 52 nennen Menschen, wenn sie frei wählen dürfen? Gib deine Zahl ein und sieh, wie selten sie ist.</p>
+  </header>
+
+  <form id="f" autocomplete="off">
+    <label class="vh" for="zahl">Deine Zahl von 1 bis 52</label>
+    <input id="zahl" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="1–52">
+    <button type="submit" id="go">Auswerten</button>
+    <button type="button" class="ghost" id="neu">Neu</button>
+  </form>
+  <p class="hint" id="hint">Beispiel unten: die 17. Tippe eine eigene Zahl ein.</p>
+
+  <section class="figures" aria-live="polite">
+    <div class="fig main">
+      <span class="k">Deine Zahl</span>
+      <span class="v" id="vZahl">17</span>
+      <span class="s" id="sRang">Platz 2 von 52</span>
+    </div>
+    <div class="fig">
+      <span class="k">So viele wählen sie</span>
+      <span class="v" id="vAnteil">4,9 %</span>
+      <span class="s" id="sAnzahl">612 von 12.486 Personen</span>
+    </div>
+    <div class="fig">
+      <span class="k">Chance auf genau diesen Treffer</span>
+      <span class="v" id="vChance">1 : 2.704</span>
+      <span class="s" id="sChance">Karte und Position zugleich</span>
+    </div>
+  </section>
+
+  <section class="chart">
+    <h2>Wie oft jede Zahl genannt wurde</h2>
+    <p class="sub">Befragung, 12.486 Personen. Die markierte Säule ist deine Zahl. Tippe eine Säule an für den Wert.</p>
+    <div class="plot" id="plot">
+      <svg id="svg" viewBox="0 0 720 260" role="img" aria-label="Häufigkeit der Zahlen 1 bis 52"></svg>
+      <div class="tip" id="tip" hidden></div>
+    </div>
+    <div class="meta"><span>Datensatz <b id="ref">CON1</b>-<span id="refNr">17</span></span><span>Stand 11/2026 · n = 12.486</span></div>
+  </section>
+
+  <footer>Die Trefferchance verbindet, wie selten deine Zahl gewählt wird, mit 52 möglichen Karten.</footer>
+</main>
+
+<script>
+(function () {
+  // ---------- Geheime Zuordnung (aus der Tabelle der Syned Soy Box) ----------
+  // Code-Buchstabe, Code-Zahl (2/4/6/8 -> Out 1-4)
+  var raw = "A2A2A4A4A6A6A8A8B2B2B4B4B6B6B8B8C2C2C4C4C6C6C8C8C8C8C6C6C4C4C2C2B8B8B6B6B4B4B2B2A8A8A6A6A4A4A2A2A4A4A2A2";
+  function secret(n) {
+    var c = raw[(n - 1) * 2], k = +raw[(n - 1) * 2 + 1];
+    var deck = n > 48 ? "E" : (n > 24 ? "U" : "O");   // O = verdeckt (von oben), U = offen, E = Etui
+    var pos = n % 2 ? "N" : "Z";                        // N = nächste Karte, Z = Karte der Zahl
+    return c + deck + pos + (k / 2);                    // z. B. CON1
+  }
+
+  // ---------- Erfundene, aber glaubwürdige Umfragedaten (immer gleich) ----------
+  var TOTAL = 12486;
+  var seed = 52017;
+  function rnd() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+  var boost = { 7: 3.1, 17: 2.7, 3: 2.0, 13: 1.9, 27: 1.8, 37: 1.7, 23: 1.6, 42: 1.5, 11: 1.4, 21: 1.35, 33: 1.3, 9: 1.25, 19: 1.25 };
+  var w = [];
+  for (var i = 1; i <= 52; i++) {
+    var v = 0.75 + rnd() * 0.5;
+    if (boost[i]) v *= boost[i];
+    if (i % 10 === 0) v *= 0.7;           // runde Zahlen seltener
+    if (i === 1 || i === 52) v *= 0.55;   // Ränder selten
+    w.push(v);
+  }
+  var sum = w.reduce(function (a, b) { return a + b; }, 0);
+  var counts = w.map(function (x) { return Math.round(x / sum * TOTAL); });
+  var diff = TOTAL - counts.reduce(function (a, b) { return a + b; }, 0);
+  counts[6] += diff;                        // Rundung ausgleichen
+  var order = counts.map(function (c, idx) { return idx; }).sort(function (a, b) { return counts[b] - counts[a]; });
+  function rank(n) { return order.indexOf(n - 1) + 1; }
+
+  var fmt = new Intl.NumberFormat("de-DE");
+  var pct = new Intl.NumberFormat("de-DE", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+  // ---------- Diagramm ----------
+  var svg = document.getElementById("svg"), NS = "http://www.w3.org/2000/svg";
+  var W = 720, H = 260, L = 52, R = 6, T = 14, B = 34;
+  var max = Math.max.apply(null, counts), yMax = Math.ceil(max / 200) * 200;
+  var bw = (W - L - R) / 52;
+  function y(v) { return T + (H - T - B) * (1 - v / yMax); }
+  function el(name, attrs, parent) {
+    var e = document.createElementNS(NS, name);
+    for (var a in attrs) e.setAttribute(a, attrs[a]);
+    (parent || svg).appendChild(e); return e;
+  }
+  for (var g = 0; g <= yMax; g += 200) {
+    el("line", { x1: L, x2: W - R, y1: y(g), y2: y(g), stroke: "var(--line)", "stroke-width": 1 });
+    var t = el("text", { x: L - 8, y: y(g) + 7, "text-anchor": "end" }); t.textContent = g;
+  }
+  var bars = [];
+  counts.forEach(function (c, idx) {
+    var n = idx + 1, x = L + idx * bw + 1, h = (H - T - B) * c / yMax;
+    var r = el("rect", { class: "bar", x: x, y: y(c), width: bw - 2, height: h, rx: 2, fill: "var(--bar)" });
+    r.dataset.n = n; bars.push(r);
+    if (n === 1 || n % 10 === 0 || n === 52) {
+      var lt = el("text", { x: x + (bw - 2) / 2, y: H - 8, "text-anchor": "middle" }); lt.textContent = n;
+    }
+    // größere Trefferfläche
+    var hit = el("rect", { x: L + idx * bw, y: T, width: bw, height: H - T - B, fill: "transparent" });
+    hit.dataset.n = n;
+  });
+
+  var tip = document.getElementById("tip"), plot = document.getElementById("plot");
+  function showTip(n, evt) {
+    var c = counts[n - 1];
+    tip.textContent = n + ": " + fmt.format(c) + " (" + pct.format(c / TOTAL * 100) + " %)";
+    var box = plot.getBoundingClientRect(), sb = svg.getBoundingClientRect();
+    var bx = sb.left - box.left + (L + (n - 0.5) * bw) * sb.width / W + plot.scrollLeft;
+    var by = sb.top - box.top + y(c) * sb.height / H;
+    tip.style.left = bx + "px"; tip.style.top = by + "px"; tip.hidden = false;
+  }
+  svg.addEventListener("pointermove", function (e) { var n = +e.target.dataset.n; if (n) showTip(n); else tip.hidden = true; });
+  svg.addEventListener("pointerleave", function () { tip.hidden = true; });
+  svg.addEventListener("click", function (e) { var n = +e.target.dataset.n; if (n) showTip(n); });
+
+  // ---------- Anzeige ----------
+  function show(n) {
+    var c = counts[n - 1];
+    document.getElementById("vZahl").textContent = n;
+    document.getElementById("sRang").textContent = "Platz " + rank(n) + " von 52";
+    document.getElementById("vAnteil").textContent = pct.format(c / TOTAL * 100) + " %";
+    document.getElementById("sAnzahl").textContent = fmt.format(c) + " von " + fmt.format(TOTAL) + " Personen";
+    var odds = Math.round(TOTAL / c * 52);
+    document.getElementById("vChance").textContent = "1 : " + fmt.format(odds);
+    document.getElementById("sChance").textContent = "deine Zahl und die passende Karte zugleich";
+    document.getElementById("ref").textContent = secret(n);
+    document.getElementById("refNr").textContent = String(n).padStart(2, "0") + "-" + (TOTAL % 997 + n * 13);
+    bars.forEach(function (b) { b.setAttribute("fill", +b.dataset.n === n ? "var(--accent)" : "var(--bar)"); });
+  }
+
+  var input = document.getElementById("zahl"), hint = document.getElementById("hint");
+  document.getElementById("f").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var n = parseInt(input.value, 10);
+    if (!(n >= 1 && n <= 52)) { hint.textContent = "Bitte eine Zahl von 1 bis 52 eingeben."; input.focus(); return; }
+    hint.textContent = "Ausgewertet: " + n + ".";
+    show(n); input.blur();
+  });
+  input.addEventListener("input", function () { input.value = input.value.replace(/\D/g, "").slice(0, 2); });
+  document.getElementById("neu").addEventListener("click", function () {
+    input.value = ""; hint.textContent = "Tippe eine Zahl von 1 bis 52 ein."; input.focus();
+  });
+
+  show(17);
+})();
+</script>
