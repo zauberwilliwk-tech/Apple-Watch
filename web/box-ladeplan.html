@@ -1,0 +1,210 @@
+<title>Box-Ladeplan</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+/* Layout: workshop sheet — two drawings (top view, section) side by side, then pile order + card case */
+:root {
+  --bg: #f4f2ee;
+  --paper: #fffdf9;
+  --fg: #1f1a14;
+  --muted: #6a6157;
+  --wood: #c9a77c;
+  --wood-dark: #8a6a43;
+  --card: #f7f9fb;
+  --card-edge: #5b6b7d;
+  --out: #b4372f;
+  --env: #3f7a5c;
+  --pin: #2a2e33;
+  --line: #ddd6cc;
+  --display: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17140f; --paper: #211c16; --fg: #f1ebe2; --muted: #b3a898; --wood: #6e5435; --wood-dark: #c49a68;
+    --card: #2b3440; --card-edge: #a9bacb; --out: #ef7a6f; --env: #73c39a; --pin: #e8e2d8; --line: #3a3229; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #17140f; --paper: #211c16; --fg: #f1ebe2; --muted: #b3a898; --wood: #6e5435; --wood-dark: #c49a68;
+  --card: #2b3440; --card-edge: #a9bacb; --out: #ef7a6f; --env: #73c39a; --pin: #e8e2d8; --line: #3a3229; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 40px;
+}
+main { max-width: 980px; margin: 0 auto; display: grid; gap: 22px; }
+main > * { min-width: 0; }
+.eyebrow { font: 500 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1 { font: 700 clamp(28px, 6vw, 40px)/1.1 var(--display); margin: 4px 0 6px; text-wrap: balance; }
+.lead { margin: 0; color: var(--muted); max-width: 65ch; }
+h2 { font: 600 18px var(--display); margin: 0; }
+.drawings { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 760px) { .drawings { grid-template-columns: 1fr; } }
+figure { margin: 0; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: grid; gap: 10px; min-width: 0; }
+figcaption { font-size: 14px; color: var(--muted); }
+svg { width: 100%; height: auto; display: block; }
+svg text { font-family: var(--body); fill: var(--fg); font-size: 12px; }
+svg .small { font-size: 10.5px; fill: var(--muted); }
+svg .lbl { font-family: var(--mono); font-weight: 500; font-size: 13px; }
+.wood { fill: var(--wood); stroke: var(--wood-dark); stroke-width: 2; }
+.inner { fill: var(--paper); stroke: var(--wood-dark); stroke-width: 1.2; }
+.lid { fill: none; stroke: var(--wood-dark); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.pile { fill: var(--card); stroke: var(--card-edge); stroke-width: 1.4; }
+.pile-big { fill: var(--card); stroke: var(--card-edge); stroke-width: 1.4; }
+.env { fill: none; stroke: var(--env); stroke-width: 3; stroke-linecap: round; }
+.pin { fill: var(--pin); }
+.chain { fill: none; stroke: var(--wood-dark); stroke-width: 1.4; stroke-dasharray: 2 3; }
+.arrow { stroke: var(--muted); stroke-width: 1.2; fill: none; marker-end: url(#ah); }
+.ahead { fill: var(--muted); }
+.num { fill: var(--fg); }
+.numtxt { fill: var(--paper); font: 600 11px var(--mono); }
+
+.lower { display: grid; grid-template-columns: 1.1fr 1fr; gap: 16px; }
+@media (max-width: 760px) { .lower { grid-template-columns: 1fr; } }
+.panel { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: grid; gap: 12px; min-width: 0; }
+.stack { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; font-variant-numeric: tabular-nums; }
+.stack li { display: grid; grid-template-columns: 74px 1fr auto; align-items: center; gap: 10px; padding: 7px 12px; border: 1px solid var(--card-edge); border-radius: 6px; background: var(--card); font-size: 15px; }
+.stack li .pos { font: 12px var(--mono); color: var(--muted); }
+.stack li.out { border-color: var(--out); border-width: 2px; }
+.stack li.out b { color: var(--out); }
+.stack li.bulk { padding-block: 16px; }
+.tag { font: 500 12px var(--mono); color: var(--muted); }
+.note { font-size: 14px; color: var(--muted); margin: 0; }
+ol.steps { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 14px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 14px; height: 14px; border-radius: 3px; display: inline-block; border: 1.5px solid var(--card-edge); background: var(--card); }
+.sw.env { border: 0; background: var(--env); height: 4px; }
+.sw.pin { border: 0; background: var(--pin); border-radius: 50%; }
+</style>
+
+<main>
+  <header>
+    <span class="eyebrow">Syned Soy Box · vorbereitet</span>
+    <h1>Box-Ladeplan</h1>
+    <p class="lead">So sieht die Box aus, wenn alles eingelegt ist: zwei Stapel mit je 8 Karten, der Stapel mit 33 Karten und das Kuvert. Schematisch nach den Abbildungen 3 bis 6 der Anleitung, nicht maßstabsgetreu.</p>
+  </header>
+
+  <div class="legend" aria-hidden="true">
+    <span><i class="sw"></i>Kartenstapel</span>
+    <span><i class="sw env"></i>Vorhersage-Kuvert</span>
+    <span><i class="sw pin"></i>Stift der Kette</span>
+  </div>
+
+  <section class="drawings">
+    <figure>
+      <svg viewBox="0 0 380 330" role="img" aria-label="Draufsicht auf die geladene Box">
+        <defs><marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="ahead" d="M0 0 L8 4 L0 8 z"/></marker></defs>
+        <!-- Deckel (offen) -->
+        <rect class="lid" x="60" y="14" width="260" height="78" rx="4"/>
+        <text class="small" x="190" y="58" text-anchor="middle">Deckel (aufgeklappt)</text>
+        <!-- Box -->
+        <rect class="wood" x="52" y="96" width="276" height="210" rx="6"/>
+        <rect class="inner" x="66" y="108" width="248" height="186" rx="3"/>
+        <!-- 8er-Stapel 1 und 2 -->
+        <rect class="pile" x="82" y="124" width="216" height="11" rx="2"/>
+        <rect class="pile" x="82" y="152" width="216" height="11" rx="2"/>
+        <circle class="num" cx="312" cy="129" r="0"/>
+        <!-- Stifte Reihe oben (zwischen den 8er-Stapeln) -->
+        <circle class="pin" cx="59" cy="144" r="5.5"/>
+        <circle class="pin" cx="321" cy="144" r="5.5"/>
+        <!-- 33er-Stapel + Kuvert -->
+        <rect class="pile-big" x="82" y="232" width="216" height="24" rx="2"/>
+        <path class="env" d="M84 272 Q190 260 296 272"/>
+        <!-- Stifte Reihe unten -->
+        <circle class="pin" cx="59" cy="244" r="5.5"/>
+        <circle class="pin" cx="321" cy="244" r="5.5"/>
+        <!-- Ketten -->
+        <path class="chain" d="M54 144 C20 150 18 236 54 244"/>
+        <path class="chain" d="M326 144 C360 150 362 236 326 244"/>
+        <!-- Stift-Beschriftung -->
+        <text class="lbl" x="34" y="132" text-anchor="middle">A</text>
+        <text class="lbl" x="34" y="268" text-anchor="middle">C</text>
+        <text class="lbl" x="346" y="268" text-anchor="middle">B</text>
+        <!-- Nummern -->
+        <g><circle class="num" cx="190" cy="129.5" r="8"/><text class="numtxt" x="190" y="133.5" text-anchor="middle">1</text></g>
+        <g><circle class="num" cx="190" cy="157.5" r="8"/><text class="numtxt" x="190" y="161.5" text-anchor="middle">2</text></g>
+        <g><circle class="num" cx="190" cy="244" r="8"/><text class="numtxt" x="190" y="248" text-anchor="middle">3</text></g>
+        <g><circle class="num" cx="190" cy="268" r="8"/><text class="numtxt" x="190" y="272" text-anchor="middle">4</text></g>
+        <!-- Bildseiten zur Mitte -->
+        <path class="arrow" d="M150 167 L150 196"/>
+        <path class="arrow" d="M150 228 L150 202"/>
+        <text class="small" x="160" y="203">Bildseiten zur Mitte</text>
+        <text class="small" x="190" y="322" text-anchor="middle">Draufsicht · Ketten hängen an den 4 Stiften</text>
+      </svg>
+      <figcaption>Von oben gesehen. 1 und 2 sind die beiden 8er-Stapel, 3 der 33er-Stapel, 4 das Kuvert. Die Buchstaben zeigen, wo die Stifte A, B und C sitzen (wie Abb. 7).</figcaption>
+    </figure>
+
+    <figure>
+      <svg viewBox="0 0 380 330" role="img" aria-label="Schnitt durch die geladene Box von der Seite">
+        <defs><marker id="ah2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="ahead" d="M0 0 L8 4 L0 8 z"/></marker></defs>
+        <!-- Boden und Wände -->
+        <path class="wood" d="M40 92 L40 286 L340 286 L340 92 L326 92 L326 272 L54 272 L54 92 Z"/>
+        <!-- Deckel geschlossen -->
+        <path class="wood" d="M40 92 L190 40 L340 92 L326 92 L190 54 L54 92 Z"/>
+        <text class="small" x="190" y="30" text-anchor="middle">Deckel geschlossen</text>
+        <!-- Stapel 1 und 2: stehen links, leicht schräg -->
+        <rect class="pile" x="92" y="120" width="12" height="152" rx="2" transform="rotate(-6 98 272)"/>
+        <rect class="pile" x="118" y="120" width="12" height="152" rx="2" transform="rotate(-6 124 272)"/>
+        <!-- Stifte zwischen/hinter Stapel 2 -->
+        <circle class="pin" cx="112" cy="252" r="5"/>
+        <circle class="pin" cx="140" cy="252" r="5"/>
+        <!-- 33er-Stapel rechts -->
+        <rect class="pile-big" x="246" y="110" width="30" height="162" rx="2" transform="rotate(6 261 272)"/>
+        <circle class="pin" cx="238" cy="252" r="5"/>
+        <!-- Kuvert gewölbt -->
+        <path class="env" d="M298 272 Q318 190 288 104"/>
+        <!-- Nummern -->
+        <g><circle class="num" cx="84" cy="112" r="8"/><text class="numtxt" x="84" y="116" text-anchor="middle">1</text></g>
+        <g><circle class="num" cx="128" cy="104" r="8"/><text class="numtxt" x="128" y="108" text-anchor="middle">2</text></g>
+        <g><circle class="num" cx="252" cy="98" r="8"/><text class="numtxt" x="252" y="102" text-anchor="middle">3</text></g>
+        <g><circle class="num" cx="314" cy="128" r="8"/><text class="numtxt" x="314" y="132" text-anchor="middle">4</text></g>
+        <!-- Hinweise -->
+        <path class="arrow" d="M150 200 L224 200" marker-end="url(#ah2)"/>
+        <path class="arrow" d="M224 214 L150 214" marker-end="url(#ah2)"/>
+        <text class="small" x="187" y="236" text-anchor="middle">Bildseiten zur Mitte</text>
+        <text class="small" x="330" y="300" text-anchor="end">Kuvert-Unterkante berührt den Boden</text>
+        <text class="small" x="190" y="322" text-anchor="middle">Schnitt von der Seite</text>
+      </svg>
+      <figcaption>Von der Seite gesehen. Die Stapel stehen hochkant, die Stifte halten sie. Das Kuvert drückt sich beim Schließen in eine Wölbung und muss unten den Boden berühren.</figcaption>
+    </figure>
+  </section>
+
+  <section class="lower">
+    <div class="panel">
+      <h2>Der 33er-Stapel ③</h2>
+      <p class="note">In der Anleitung heißt er „Stapel 1“. Von oben nach unten, so wie er verdeckt vor dir liegt. Die vier Outs sind rot umrandet.</p>
+      <ol class="stack">
+        <li><span class="pos">oben</span><span>beliebige Karte</span><span class="tag">33</span></li>
+        <li class="out"><span class="pos">Out 1</span><b>Kreuz 4</b><span class="tag">32</span></li>
+        <li><span class="pos"></span><span>beliebige Karte</span><span class="tag">31</span></li>
+        <li class="out"><span class="pos">Out 2</span><b>Herz 2</b><span class="tag">30</span></li>
+        <li><span class="pos"></span><span>beliebige Karte</span><span class="tag">29</span></li>
+        <li class="out"><span class="pos">Out 3</span><b>Karo 7</b><span class="tag">28</span></li>
+        <li><span class="pos"></span><span>beliebige Karte</span><span class="tag">27</span></li>
+        <li class="out"><span class="pos">Out 4</span><b>Kreuz 3</b><span class="tag">26</span></li>
+        <li class="bulk"><span class="pos">unten</span><span>25 beliebige Karten</span><span class="tag">1–25</span></li>
+      </ol>
+      <p class="note">Die rechte Zahl ist die Lage von unten gezählt, so wie du den Stapel aufbaust.</p>
+    </div>
+
+    <div class="panel">
+      <h2>Reihenfolge beim Einladen</h2>
+      <ol class="steps">
+        <li>Ketten mit den Stiften seitlich an der Box befestigen (Abb. 2).</li>
+        <li>Ersten 8er-Stapel hineinstellen <strong>①</strong> (Abb. 3).</li>
+        <li>Zweiten 8er-Stapel davor stellen <strong>②</strong>: ein Stift vor dem Stapel, der andere dahinter (Abb. 4).</li>
+        <li>33er-Stapel einsetzen <strong>③</strong> (Abb. 5). Alle Bildseiten zeigen zur Mitte der Box.</li>
+        <li>Kuvert einstellen <strong>④</strong> und Deckel schließen. Leichter Widerstand ist normal.</li>
+      </ol>
+      <h2>Außerhalb der Box: das Etui</h2>
+      <p class="note">Im scheinbar leeren Kartenetui liegen 4 beliebige Füllkarten verdeckt an der Laschenseite. Du brauchst sie nur bei den Zahlen 49 bis 52.</p>
+      <p class="note">Zusammen: 8 + 8 + 33 = 49 Karten in der Box (mit Joker), 4 im Etui.</p>
+    </div>
+  </section>
+</main>
