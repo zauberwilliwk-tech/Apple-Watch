@@ -47,14 +47,23 @@ for i, c in enumerate(counts):
         svg.append(f'<text x="{x+(bw-2.4)/2:.1f}" y="{H-8}" text-anchor="middle">{n}</text>')
 svg.append("</svg>")
 
-# Tabelle in 4 Spalten à 13 Zeilen
+# Tabelle in 4 Spalten à 13 Zeilen – Code versteckt in harmlosen Spalten:
+#   Trend ▲ = von oben (verdeckt) · ▼ = von unten (offen) · – = Etui (49–52)
+#   Alter <30 = Code A · 30–49 = Code B · 50+ = Code C
+#   Spitze Q1–Q4 = Out 1–4
+AGE = {"A": "&lt;30", "B": "30–49", "C": "50+"}
 blocks = []
 for b in range(4):
     rows = []
     for n in range(b*13 + 1, b*13 + 14):
         c = counts[n-1]
-        rows.append(f"<tr><td class=n>{n}</td><td>{thousands(c)}</td><td>{de(c/TOTAL*100)}&nbsp;%</td><td>{rank[n]}</td><td class=id>{secret(n)}</td></tr>")
-    blocks.append("<table><thead><tr><th>Zahl</th><th>Nenn.</th><th>Anteil</th><th>Rang</th><th>ID</th></tr></thead><tbody>" + "".join(rows) + "</tbody></table>")
+        code, k = raw[(n-1)*2], int(raw[(n-1)*2+1])
+        mag = de(0.1 + rnd() * 0.5)
+        if n > 48: trend = "<span class=tr>–&nbsp;0,0</span>"
+        elif n > 24: trend = f"<span class=tr>▼&nbsp;{mag}</span>"
+        else: trend = f"<span class=tr>▲&nbsp;{mag}</span>"
+        rows.append(f"<tr><td class=n>{n}</td><td>{de(c/TOTAL*100)}&nbsp;%</td><td>{trend}</td><td>{AGE[code]}</td><td>Q{k//2}</td></tr>")
+    blocks.append("<table><thead><tr><th>Zahl</th><th>Anteil</th><th>Trend</th><th>Alter</th><th>Spitze</th></tr></thead><tbody>" + "".join(rows) + "</tbody></table>")
 
 top5 = ", ".join(f"{i+1} ({de(counts[i]/TOTAL*100)} %)" for i in order[:5])
 html = f"""<!doctype html><html lang=de><meta charset=utf-8><title>Zahlenwahl-Studie</title>
@@ -77,12 +86,12 @@ svg text {{ font-size: 9px; fill: #6b7787; font-family: inherit; }}
 table {{ border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }}
 th {{ font-size: 6.5pt; text-transform: uppercase; letter-spacing: .05em; color: #5c6878; text-align: right; font-weight: normal; border-bottom: .8pt solid #18222e; padding: 0 1mm 1mm; }}
 th:first-child {{ text-align: left; }}
-td {{ text-align: right; padding: 2.35mm 1mm; border-bottom: .4pt solid #e1e5ea; font-size: 8pt; }}
+td {{ text-align: right; padding: 2.9mm 1mm; border-bottom: .4pt solid #e1e5ea; font-size: 8pt; }}
 td.n {{ text-align: left; font-weight: bold; font-size: 10pt; }}
-td.id {{ white-space: nowrap; font-family: "DejaVu Sans Mono", monospace; font-size: 8.5pt; font-weight: bold; color: #4a5666; letter-spacing: .02em; }}
+td.unused {{ white-space: nowrap; font-family: "DejaVu Sans Mono", monospace; font-size: 8.5pt; font-weight: bold; color: #4a5666; letter-spacing: .02em; }}
 tr:nth-child(even) td {{ background: #f4f6f9; }}
-.foot {{ margin-top: 4mm; display: flex; justify-content: space-between; color: #8a95a4; font-size: 7pt; border-top: .4pt solid #d6dbe2; padding-top: 2mm; }}
-</style>
+.foot {{ margin-top: 4mm; display: flex; flex-wrap: wrap; gap: 1mm 6mm; justify-content: space-between; color: #8a95a4; font-size: 7pt; border-top: .4pt solid #d6dbe2; padding-top: 2mm; }}
+.tr {{ white-space: nowrap; color: #4a5666; }}\ntd {{ white-space: nowrap; }}\n</style>
 <div class=eyebrow>Erhebung 2026 · Freie Zahlenwahl im Bereich 1–52</div>
 <h1>Zahlenwahl-Studie</h1>
 <p class=lead>Die Teilnehmenden sollten sich ein Kartenspiel vorstellen und in Gedanken irgendwo abheben. Erfasst wurde, wie viele Karten sie dabei abgehoben hätten.</p>
@@ -97,6 +106,6 @@ tr:nth-child(even) td {{ background: #f4f6f9; }}
 <p class=cap>Dunkel markiert: die fünf häufigsten Zahlen – {top5}.</p>
 <h2>Alle Ergebnisse</h2>
 <div class=grid>{''.join(blocks)}</div>
-<div class=foot><span>ID = Kennung der Erhebungsgruppe</span><span>Stand 11/2026</span></div>
+<div class=foot><span>Trend: Veränderung des Anteils gegenüber 2025 in Prozentpunkten · Alter: Altersgruppe mit dem höchsten Anteil · Spitze: Quartal mit den meisten Nennungen</span><span>Stand 11/2026</span></div>
 </html>"""
 pathlib.Path("zahlenwahl-studie.html").write_text(html, encoding="utf-8")
