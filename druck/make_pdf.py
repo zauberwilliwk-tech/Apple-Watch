@@ -51,6 +51,7 @@ svg.append("</svg>")
 #   Trend ▼ = Rückseite oben (verdeckt abzählen) · ▲ = Bildseite oben (offen abzählen) · – = Etui (49–52)
 #   Gruppe A/B/C = Startstift · D = Ausnahme 49–52 (Etui, Stifte wie A)
 #   Spitze Q1–Q4 = Out 1–4
+#   Zeile grau = gerade = Karte der Zahl · Zeile weiß = ungerade = nächste Karte
 blocks = []
 for b in range(4):
     rows = []
@@ -61,7 +62,7 @@ for b in range(4):
         if n > 48: trend = "<span class=tr>–&nbsp;0,0</span>"
         elif n > 24: trend = f"<span class=tr>▲&nbsp;{mag}</span>"
         else: trend = f"<span class=tr>▼&nbsp;{mag}</span>"
-        rows.append(f"<tr><td class=n>{n}</td><td>{de(c/TOTAL*100)}&nbsp;%</td><td>{trend}</td><td class=g>{"D" if n > 48 else code}</td><td>Q{k//2}</td></tr>")
+        rows.append(f"<tr{' class=g' if n % 2 == 0 else ''}><td class=n>{n}</td><td>{de(c/TOTAL*100)}&nbsp;%</td><td>{trend}</td><td class=g>{"D" if n > 48 else code}</td><td>Q{k//2}</td></tr>")
     blocks.append("<table><thead><tr><th>Zahl</th><th>Anteil</th><th>Trend</th><th>Gruppe</th><th>Spitze</th></tr></thead><tbody>" + "".join(rows) + "</tbody></table>")
 
 top5 = ", ".join(f"{i+1} ({de(counts[i]/TOTAL*100)} %)" for i in order[:5])
@@ -88,7 +89,7 @@ th:first-child {{ text-align: left; }}
 td {{ text-align: right; padding: 2.9mm 1mm; border-bottom: .4pt solid #e1e5ea; font-size: 8pt; }}
 td.n {{ text-align: left; font-weight: bold; font-size: 10pt; }}
 td.unused {{ white-space: nowrap; font-family: "DejaVu Sans Mono", monospace; font-size: 8.5pt; font-weight: bold; color: #4a5666; letter-spacing: .02em; }}
-tr:nth-child(even) td {{ background: #f4f6f9; }}
+tr.g td {{ background: #e8ecf1; }}
 .foot {{ margin-top: 4mm; display: flex; flex-wrap: wrap; gap: 1mm 6mm; justify-content: space-between; color: #8a95a4; font-size: 7pt; border-top: .4pt solid #d6dbe2; padding-top: 2mm; }}
 .tr {{ white-space: nowrap; color: #4a5666; }}\ntd.g {{ text-align: center; }}\ntd {{ white-space: nowrap; }}\n</style>
 <div class=eyebrow>Erhebung 2026 · Freie Zahlenwahl im Bereich 1–52</div>
