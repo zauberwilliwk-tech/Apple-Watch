@@ -48,7 +48,7 @@ for i, c in enumerate(counts):
 svg.append("</svg>")
 
 # Tabelle in 4 Spalten à 13 Zeilen – Code versteckt in harmlosen Spalten:
-#   Trend ▲ = von oben (verdeckt) · ▼ = von unten (offen) · – = Etui (49–52)
+#   Trend ▼ = Rückseite oben (verdeckt abzählen) · ▲ = Bildseite oben (offen abzählen) · – = Etui (49–52)
 #   Gruppe A/B/C = Startstift · D = Ausnahme 49–52 (Etui, Stifte wie A)
 #   Spitze Q1–Q4 = Out 1–4
 blocks = []
@@ -59,8 +59,8 @@ for b in range(4):
         code, k = raw[(n-1)*2], int(raw[(n-1)*2+1])
         mag = de(0.1 + rnd() * 0.5)
         if n > 48: trend = "<span class=tr>–&nbsp;0,0</span>"
-        elif n > 24: trend = f"<span class=tr>▼&nbsp;{mag}</span>"
-        else: trend = f"<span class=tr>▲&nbsp;{mag}</span>"
+        elif n > 24: trend = f"<span class=tr>▲&nbsp;{mag}</span>"
+        else: trend = f"<span class=tr>▼&nbsp;{mag}</span>"
         rows.append(f"<tr><td class=n>{n}</td><td>{de(c/TOTAL*100)}&nbsp;%</td><td>{trend}</td><td class=g>{"D" if n > 48 else code}</td><td>Q{k//2}</td></tr>")
     blocks.append("<table><thead><tr><th>Zahl</th><th>Anteil</th><th>Trend</th><th>Gruppe</th><th>Spitze</th></tr></thead><tbody>" + "".join(rows) + "</tbody></table>")
 
